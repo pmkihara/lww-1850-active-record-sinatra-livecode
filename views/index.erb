@@ -1,0 +1,18 @@
+<h1>All restaurants</h1>
+<p>The list of my restaurants</p>
+<ul>
+  <% @restaurants.each do |restaurant| %>
+    <li><a href="/restaurants/<%= restaurant.id %>"><%= restaurant.name %></a></li>
+  <% end %>
+</ul>
+<form action="/restaurants" method="POST">
+  <div>
+    <label for="name">Restaurant name</label>
+    <input type="text" name="name" id="name">
+  </div>
+  <div>
+    <label for="city">Restaurant city</label>
+    <input type="text" name="city" id="city">
+  </div>
+  <input type="submit">
+</form>

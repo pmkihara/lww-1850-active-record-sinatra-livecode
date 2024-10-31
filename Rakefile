@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 
@@ -8,7 +10,7 @@ task :rubocop do
   sh 'rubocop --format simple || true'
 end
 
-task default: [:rubocop, :spec]
+task default: %i[rubocop spec]
 
 desc 'Open an irb session preloaded with the environment'
 task :console do
@@ -36,11 +38,11 @@ db_namespace = namespace :db do
   task :migrate do
     ActiveRecord::Migrator.migrations_paths = 'db/migrate'
     ActiveRecord::Migration.verbose = true
-    version = ENV['VERSION'] ? ENV['VERSION'].to_i : nil
+    version = ENV['VERSION']&.to_i
     args = [ActiveRecord::Migrator.migrations_paths]
-    args << ActiveRecord::SchemaMigration if ActiveRecord.version.to_s >= "6.0.0"
+    args << ActiveRecord::SchemaMigration if ActiveRecord.version.to_s >= '6.0.0'
     ActiveRecord::MigrationContext.new(*args).migrate(version)
-    db_namespace["schema:dump"].invoke
+    db_namespace['schema:dump'].invoke
   end
 
   desc 'Retrieves the current schema version number'
@@ -64,7 +66,7 @@ db_namespace = namespace :db do
       require 'active_record/schema_dumper'
       filename = 'db/schema.rb'
 
-      File.open(filename, "w:utf-8") do |file|
+      File.open(filename, 'w:utf-8') do |file|
         ActiveRecord::SchemaDumper.dump(ActiveRecord::Base.connection, file)
       end
     end
@@ -73,7 +75,7 @@ db_namespace = namespace :db do
   private
 
   def db_path
-    if ActiveRecord.version.to_s >= "6.1"
+    if ActiveRecord.version.to_s >= '6.1'
       ActiveRecord::Base.configurations.configs_for(env_name: 'development', name: 'primary').database
     else
       ActiveRecord::Base.configurations['development']['database']
